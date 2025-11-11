@@ -4,6 +4,8 @@
 
 ## クイックスタート
 
+### オプション1: シンプルな1ファイル構成（初心者向け）
+
 1. `template_player.py` をコピーして新しいファイルを作成
    ```bash
    cp template_player.py player_yourname.py
@@ -19,11 +21,32 @@
    uv run python tournament.py
    ```
 
+### オプション2: 複数ファイル構成（機械学習/複雑なAI向け）
+
+1. `player_bob/` ディレクトリを参考に新しいディレクトリを作成
+   ```bash
+   mkdir player_yourname
+   cd player_yourname
+   ```
+
+2. `__init__.py`、`player.py`、`strategy.py`などを作成
+
+3. トーナメントで自動検出される
+
+詳細は `player_bob/README.md` を参照してください。
+
 ## ファイル命名規則
 
+### 1ファイル構成
 - `player_<あなたの名前>.py` の形式を推奨
 - 例: `player_alice.py`, `player_bob.py`
 - 複数のAIを作る場合: `player_alice_v1.py`, `player_alice_aggressive.py` など
+
+### 複数ファイル構成（ディレクトリ）
+- `player_<あなたの名前>/` の形式を推奨
+- 例: `player_alice/`, `player_bob/`
+- 必ず `__init__.py` にプレイヤークラスをエクスポート
+- 学習済みモデル、データファイル、複数のモジュールを配置可能
 
 ## 基本構造
 
@@ -122,7 +145,7 @@ team, state, pawn, SpawnPoint, done = info
 ### 重要な定数（`tcg.config` からインポート可能）
 
 ```python
-from tcg.config import fortress_limit, fortress_cool, l_command, A_fortress
+from tcg.config import fortress_limit, fortress_cool
 
 # 要塞レベルごとの最大部隊数
 fortress_limit = [10, 10, 20, 30, 40, 50]  # インデックス0は未使用
@@ -137,12 +160,6 @@ fortress_cool = [
     [100, 200],  # レベル4
     [80, 160],   # レベル5
 ]
-
-# 全ての有効なコマンドリスト（64個）
-l_command = [(0, 0, 0), (1, 0, 1), (1, 0, 3), ...]
-
-# 要塞の隣接関係（対称行列）
-A_fortress[from][to] = 1 なら隣接
 ```
 
 ### 要塞の配置

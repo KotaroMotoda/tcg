@@ -26,11 +26,11 @@ source .venv/bin/activate  # macOS/Linuxの場合
 uv sync
 
 # ゲームの実行
-cd src && uv run python main.py
+uv run python src/main.py
 
 # または、仮想環境を有効化してから実行
 source .venv/bin/activate
-cd src && python main.py
+python src/main.py
 
 # デフォルトで11試合実行（最初の1試合 + 最後のループで10試合）
 ```
@@ -42,20 +42,28 @@ cd src && python main.py
 ```
 src/
 ├── main.py              # エントリーポイント
+├── tournament.py        # トーナメント実行スクリプト
 └── tcg/
     ├── __init__.py
     ├── config.py        # ゲーム定数と設定
     ├── controller.py    # Controller基底クラス
     ├── game.py          # Gameクラス（メインゲームロジック）
-    ├── players.py       # AIプレイヤー実装
-    └── utils.py         # ユーティリティ関数
+    ├── utils.py         # ユーティリティ関数
+    └── players/         # AIプレイヤー実装ディレクトリ
+        ├── __init__.py
+        ├── sample_random.py    # ランダムプレイヤー
+        ├── claude_player.py    # ClaudePlayerサンプル
+        └── template_player.py  # プレイヤー作成用テンプレート
 ```
 
 ### モジュール説明
 
 **src/main.py**
 - ゲームのエントリーポイント
-- AIプレイヤー同士で11試合実行（最初の1試合 + ループで10試合）
+- ClaudePlayer vs RandomPlayerで対戦を実行
+
+**src/tournament.py**
+- トーナメント形式で複数のAIプレイヤーを対戦させるスクリプト
 
 **src/tcg/config.py**
 - ゲームの定数（ウィンドウサイズ、速度、色など）
@@ -73,9 +81,10 @@ src/
 - 要塞のアップグレード、部隊の生成、移動を処理
 - Pygameでのビジュアライゼーション
 
-**src/tcg/players.py**
-- `RandomPlayer`：ランダムに行動するAI
-- `Random_Zako`：弱いランダムAI（50ステップごとにのみ行動）
+**src/tcg/players/**
+- `sample_random.py`：`RandomPlayer`（ランダムに行動するAI）
+- `claude_player.py`：`ClaudePlayer`（Claudeによる実装例）
+- `template_player.py`：新しいプレイヤーを作成するためのテンプレート
 
 **src/tcg/utils.py**
 - `Swap_team()`：チーム視点の切り替え
@@ -151,12 +160,13 @@ src/
 
 ## 新しいAIプレイヤーの作成方法
 
-1. `src/tcg/players.py`に新しいクラスを作成
+1. `src/tcg/players/`ディレクトリに新しいPythonファイルを作成（例：`my_ai.py`）
 2. `Controller`クラスを継承
 3. `team_name()`メソッドを実装（プレイヤー名を返す）
 4. `update(info)`メソッドを実装（ゲーム状態を受け取り、コマンドを返す）
+5. `src/main.py`でインポートして使用
 
-例：
+例（`src/tcg/players/my_ai.py`）：
 ```python
 from tcg.controller import Controller
 
@@ -171,6 +181,15 @@ class MyAI(Controller):
         return command, subject, to
 ```
 
+`src/main.py`での使用例：
+```python
+from tcg.game import Game
+from tcg.players.my_ai import MyAI
+from tcg.players.sample_random import RandomPlayer
+
+Game(MyAI(), RandomPlayer()).run()
+```
+
 ## ビジュアライゼーション制御
 
 - `Game`クラスの`window`引数で制御（デフォルト: `True`）
@@ -182,7 +201,8 @@ class MyAI(Controller):
 
 ## 開発のヒント
 
+- 新しいAIを作成する場合は、`src/tcg/players/template_player.py`をコピーして編集するのが便利
 - 新しいAIを作成したら、`src/main.py`でインポートして使用する
 - ゲーム速度は`config.py`の`SPEEDRATE`と`FPS`で調整
 - デバッグ時は`Game(..., window=False)`でウィンドウ非表示にして高速実行可能
-- GNN用のグラフ表現は`edge_index`と`Edge_dict`を使用
+- トーナメントで複数のAIを一括対戦させる場合は`src/tournament.py`を参照
