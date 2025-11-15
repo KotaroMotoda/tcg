@@ -15,10 +15,10 @@
 
 3. `update()` メソッドに戦略を実装
 
-4. トーナメントを実行
+4. ゲームを実行
+    main.pyを変更して、作成したプレーヤーで戦うように変更
    ```bash
-   cd src
-   uv run python tournament.py
+   uv run python src/main.py
    ```
 
 ### オプション2: 複数ファイル構成（機械学習/複雑なAI向け）
@@ -40,7 +40,6 @@
 ### 1ファイル構成
 - `player_<あなたの名前>.py` の形式を推奨
 - 例: `player_alice.py`, `player_bob.py`
-- 複数のAIを作る場合: `player_alice_v1.py`, `player_alice_aggressive.py` など
 
 ### 複数ファイル構成（ディレクトリ）
 - `player_<あなたの名前>/` の形式を推奨
@@ -309,7 +308,7 @@ def update(self, info):
 ```
 
 ### 3. ビジュアルで確認
-`src/tcg/config.py` の `ON_window = True` にしてゲームを実行すると、
+`src/main.py` 内の `Game()` に `window=True` を渡してゲームを実行すると、
 ウィンドウで状況を確認できます。
 
 ## 注意事項
@@ -328,16 +327,10 @@ def update(self, info):
 
 ## サンプルAI
 
-参考として以下のAIが `src/tcg/sample_players.py` にあります:
+参考として以下のAIが `src/tcg/sample_players.py`、`src/tcg/claude_player.py`があります。
 - `RandomPlayer`: ランダムに行動
-- `Random_Zako`: 50ステップごとにランダム行動（弱い）
+- `ClaudePlayer`: Claude-Codeに作らせた
 
 これらを参考にして、独自の戦略を実装してください！
-
-## 質問・トラブルシューティング
-
-- コマンドが無効: `state[fortress_id][5]` で隣接要塞を確認
-- 要塞がアップグレードできない: レベル、部隊数、upgrade_timeを確認
-- ゲームが遅い: `config.py` の `ON_window = False` で高速化
 
 頑張って最強のAIを作りましょう！
