@@ -21,3 +21,5 @@ uv run python src/main.py
 ## 実験内容
 
 src/tcg/players以下のファイルを参考にして独自のAIプレイヤーを実装してください。
+
+書き換えOK
